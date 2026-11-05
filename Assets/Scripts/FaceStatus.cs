@@ -4,18 +4,21 @@ using UnityEngine.XR.ARSubsystems;
 
 // Drop this on any GameObject in the scene (e.g. XR Origin).
 // Face mode:   shows "Face detected" / "No face".
-// Marker mode: shows "Marker: <name>" / "Looking for marker...".
+// Marker mode: shows "Marker: <name>" for the marker(s) whose object is on screen,
+//              or "Looking for marker...".
 // No UI setup needed.
 public class FaceStatus : MonoBehaviour
 {
     ARFaceManager faceManager;
     ARTrackedImageManager imageManager;
+    MarkerSpawner spawner;
     GUIStyle style;
 
     void Awake()
     {
         faceManager = FindAnyObjectByType<ARFaceManager>(FindObjectsInactive.Include);
         imageManager = FindAnyObjectByType<ARTrackedImageManager>(FindObjectsInactive.Include);
+        spawner = FindAnyObjectByType<MarkerSpawner>(FindObjectsInactive.Include);
     }
 
     void OnGUI()
@@ -36,12 +39,22 @@ public class FaceStatus : MonoBehaviour
         else if (imageManager != null && imageManager.enabled)
         {
             text = "Looking for marker...";
-            foreach (var image in imageManager.trackables)
+
+            if (spawner != null)
             {
-                if (image.trackingState == TrackingState.Tracking)
+                // Same answer as what's on screen, after MarkerSpawner's filtering.
+                if (spawner.VisibleMarkers.Count > 0)
+                    text = "Marker: " + string.Join(", ", spawner.VisibleMarkers);
+            }
+            else
+            {
+                foreach (var image in imageManager.trackables)
                 {
-                    text = $"Marker: {image.referenceImage.name}";
-                    break;
+                    if (image.trackingState == TrackingState.Tracking)
+                    {
+                        text = $"Marker: {image.referenceImage.name}";
+                        break;
+                    }
                 }
             }
         }
