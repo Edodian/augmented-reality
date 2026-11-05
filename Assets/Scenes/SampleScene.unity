@@ -1205,7 +1205,10 @@ MonoBehaviour:
     prefab: {fileID: 6084261284425945776, guid: e1b31804661ee5240b1bb8be89d28556, type: 3}
   fallbackPrefab: {fileID: 0}
   offset: {x: 0, y: 0.03, z: 0}
+  overlapMode: 0
+  sameSpotFraction: 0.6
   hideWhenLost: 1
+  hideWhenOffScreen: 1
   showDebug: 1
 --- !u!114 &773190238
 MonoBehaviour:
